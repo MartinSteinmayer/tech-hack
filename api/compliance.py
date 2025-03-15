@@ -1,38 +1,96 @@
 from flask import Blueprint, request, jsonify
 from .mock_data import compliance_data
+from langchain_mistralai import ChatMistralAI
+import getpass
+import os
+from mistralai import Mistral
+import fitz
+import requests
 
 compliance_bp = Blueprint('compliance', __name__)
 
+if "MISTRAL_API_KEY" not in os.environ:
+    os.environ["MISTRAL_API_KEY"] = "DMdIWKxhPs5mo4sHiqh8gBXveVzxNssq"
+
+api_key = os.environ["MISTRAL_API_KEY"]
+model = "mistral-large-latest"
+
+client = Mistral(api_key=api_key)
+
+
+@compliance_bp.route('/test', methods=['GET'])
+def test():
+    messages = [
+        {
+            "role": "user",
+            "content": "What is the best French meal? Return the name and the ingredients in short JSON object.",
+        }
+    ]
+    chat_response = client.chat.complete(
+          model = model,
+          messages = messages,
+          response_format = {
+              "type": "json_object",
+          }
+    )
+    # print(chat_response.choices[0].message.content)
+    return chat_response.choices[0].message.content
+
+def extract_text_from_pdf(pdf_path):
+    """Extract text from an uploaded PDF file using PyMuPDF."""
+    text = ""
+    doc = fitz.open(pdf_path)
+    for page in doc:
+        text += page.get_text("text") + "\n"
+    return text
 
 @compliance_bp.route('/analyze-document', methods=['POST'])
 def analyze_document():
-    """Analyze a document for compliance requirements"""
-    # In a real implementation, this would receive a file
-    # For the hackathon, we'll mock this with JSON input
-    data = request.json
-    document_type = data.get('document_type', 'contract')
-    industry = data.get('industry', 'manufacturing')
+    """Accepts a PDF file, extracts text, and processes it."""
 
-    # This would later use Mistral AI for document analysis
-    analysis = {
-        "document_type":
-            document_type,
-        "identified_clauses": ["liability", "termination", "confidentiality"],
-        "compliance_concerns": [{
-            "type": "Missing clause",
-            "description": "No data protection clause identified",
-            "severity": "high"
-        }, {
-            "type": "Unclear language",
-            "description": "Termination conditions ambiguous",
-            "severity": "medium"
-        }],
-        "suggested_actions": [
-            "Add GDPR compliance clause", "Clarify termination conditions", "Add force majeure clause"
-        ]
-    }
+    # Check if a file is provided
+    if "file" not in request.files:
+        return jsonify({"error": "No file uploaded"}), 400
 
-    return jsonify(analysis)
+    file = request.files["file"]
+
+    # Ensure it's a PDF file
+    if not file.filename.endswith(".pdf"):
+        return jsonify({"error": "Only PDF files are allowed"}), 400
+
+    # Save the uploaded file
+    temp_path = "uploaded_document.pdf"
+    file.save(temp_path)
+
+    # Extract text from PDF
+    extracted_text = extract_text_from_pdf(temp_path)
+
+    # Process the extracted text (e.g., send it to Mistral, or return it for now)
+    os.remove(temp_path)  # Cleanup the temporary file
+
+    # return jsonify({"extracted_text": extracted_text[:500]})
+    # return extracted_text[:500]
+    messages = [
+        {
+            "role": "user",
+            "content": f"""You are a compliance expert analyzing legal documents.
+            Analyze the following document for legal and compliance irregularities.
+        Identify missing clauses, ambiguous language, and potential legal risks.
+        Answer in JSON format with the following keys: identified clauses, compliance concerns and suggested actions.
+
+        Document:
+        {extracted_text}""",
+        }
+    ]
+    chat_response = client.chat.complete(
+          model = model,
+          messages = messages,
+          response_format = {
+              "type": "json_object",
+          }
+    )
+    return chat_response.choices[0].message.content
+
 
 
 @compliance_bp.route('/requirements', methods=['GET'])
