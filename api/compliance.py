@@ -6,35 +6,18 @@ import os
 from mistralai import Mistral
 import fitz
 import requests
+from dotenv import load_dotenv
+
 
 compliance_bp = Blueprint('compliance', __name__)
 
-if "MISTRAL_API_KEY" not in os.environ:
-    os.environ["MISTRAL_API_KEY"] = "DMdIWKxhPs5mo4sHiqh8gBXveVzxNssq"
-
-api_key = os.environ["MISTRAL_API_KEY"]
+load_dotenv()
+api_key = os.getenv("MISTRAL_API_KEY")
 model = "mistral-large-latest"
 
 client = Mistral(api_key=api_key)
 
 
-@compliance_bp.route('/test', methods=['GET'])
-def test():
-    messages = [
-        {
-            "role": "user",
-            "content": "What is the best French meal? Return the name and the ingredients in short JSON object.",
-        }
-    ]
-    chat_response = client.chat.complete(
-          model = model,
-          messages = messages,
-          response_format = {
-              "type": "json_object",
-          }
-    )
-    # print(chat_response.choices[0].message.content)
-    return chat_response.choices[0].message.content
 
 def extract_text_from_pdf(pdf_path):
     """Extract text from an uploaded PDF file using PyMuPDF."""
@@ -66,10 +49,6 @@ def analyze_document():
     extracted_text = extract_text_from_pdf(temp_path)
 
     # Process the extracted text (e.g., send it to Mistral, or return it for now)
-    os.remove(temp_path)  # Cleanup the temporary file
-
-    # return jsonify({"extracted_text": extracted_text[:500]})
-    # return extracted_text[:500]
     messages = [
         {
             "role": "user",
@@ -89,6 +68,8 @@ def analyze_document():
               "type": "json_object",
           }
     )
+
+    os.remove(temp_path)  # Cleanup the temporary file
     return chat_response.choices[0].message.content
 
 
@@ -125,3 +106,23 @@ def verify_compliance():
     }
 
     return jsonify(verification_result)
+
+
+
+# @compliance_bp.route('/test', methods=['GET'])
+# def test():
+    # messages = [
+        # {
+            # "role": "user",
+            # "content": "What is the best French meal? Return the name and the ingredients in short JSON object.",
+        # }
+    # ]
+    # chat_response = client.chat.complete(
+          # model = model,
+          # messages = messages,
+          # response_format = {
+              # "type": "json_object",
+          # }
+    # )
+    # # print(chat_response.choices[0].message.content)
+    # return chat_response.choices[0].message.content
