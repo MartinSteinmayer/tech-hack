@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 
 compliance_bp = Blueprint('compliance', __name__)
 
+
 load_dotenv()
 api_key = os.getenv("MISTRAL_API_KEY")
 model = "mistral-large-latest"
