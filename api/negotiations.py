@@ -64,25 +64,20 @@ def draft_message():
     """Draft a communication message to a supplier"""
     data = request.json
     message_type = data.get('type', 'inquiry')
-    supplier_id = data.get('supplier_id')
-
-    # Find supplier
-    supplier = next((s for s in suppliers_data if s['id'] == supplier_id), None)
-    if not supplier:
-        return jsonify({"error": "Supplier not found"}), 404
+    supplier_name = data.get('supplier')
 
     # This would use Mistral AI to generate actual messages
     message_templates = {
         "inquiry":
-            f"Dear {supplier['name']},\n\nWe are interested in your products and would like to request more information about your pricing and availability for our upcoming projects.\n\nBest regards,\nTacto Team",
+            f"Dear {supplier_name},\n\nWe are interested in your products and would like to request more information about your pricing and availability for our upcoming projects.\n\nBest regards,\nTacto Team",
         "negotiation":
-            f"Dear {supplier['name']},\n\nThank you for your quote. We would like to discuss the possibility of a volume discount based on our projected annual needs.\n\nBest regards,\nTacto Team",
+            f"Dear {supplier_name},\n\nThank you for your quote. We would like to discuss the possibility of a volume discount based on our projected annual needs.\n\nBest regards,\nTacto Team",
         "followup":
-            f"Dear {supplier['name']},\n\nI'm following up on our previous conversation regarding pricing. Have you had a chance to review our proposal?\n\nBest regards,\nTacto Team"
+            f"Dear {supplier_name},\n\nI'm following up on our previous conversation regarding pricing. Have you had a chance to review our proposal?\n\nBest regards,\nTacto Team"
     }
 
     return jsonify({
-        "subject": f"Re: {message_type.capitalize()} with {supplier['name']}",
+        "subject": f"Re: {message_type.capitalize()} with {supplier_name}",
         "body": message_templates.get(message_type, message_templates['inquiry']),
         "suggested_tone": "Professional and direct",
         "key_points": ["Reference previous communication", "Be specific about needs", "Include timeline expectations"]
