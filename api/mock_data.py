@@ -4,10 +4,6 @@ Mock data module for a supplier management Flask API.
 Contains data structures for suppliers, orders, negotiations, and compliance items.
 """
 
-from flask import jsonify
-
-from api import negotiations
-
 # Mock suppliers data
 suppliers_data = [
     {
