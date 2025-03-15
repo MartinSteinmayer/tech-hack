@@ -37,8 +37,9 @@ def generate_dossier():
 @negotiations_bp.route('/strategies', methods=['GET'])
 def get_strategies():
     """Get pricing strategies based on supplier and product"""
-    supplier_id = request.args.get('supplier_id')
+    supplier_name = request.args.get('supplier')
     product_category = request.args.get('category')
+    description = request.args.get('description')
 
     # This would later use Mistral AI to generate custom strategies
     strategies = [{
