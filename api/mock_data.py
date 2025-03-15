@@ -1,7 +1,15 @@
 # mock_data.py
+"""
+Mock data module for a supplier management Flask API.
+Contains data structures for suppliers, orders, negotiations, and compliance items.
+"""
+
+from flask import jsonify
+
+from api import negotiations
 
 # Mock suppliers data
-mock_suppliers = [
+suppliers_data = [
     {
       "id": 1,
       "name": "ElectroTech Industries",
@@ -386,10 +394,10 @@ mock_suppliers = [
 def get_supplier_by_id(id):
     """Find a supplier by ID."""
     supplier_id = int(id) if isinstance(id, str) else id
-    return next((supplier for supplier in mock_suppliers if supplier["id"] == supplier_id), None)
+    return next((supplier for supplier in suppliers_data if supplier["id"] == supplier_id), None)
 
 # Mock orders data
-mock_orders = [
+orders_data = [
     {
         "id": "ORD-2023-421",
         "supplierId": 1,
@@ -441,4 +449,208 @@ mock_orders = [
     {
         "id": "ORD-2023-418",
         "supplierId": 3,
-        "supplierName": "RawMat Suppliers
+        "supplierName": "RawMat Suppliers Inc",
+        "date": "2023-09-05",
+        "deliveryDate": "2023-09-20",
+        "status": "processing",
+        "items": [
+            { "name": "Industrial Polymers", "quantity": 500, "unitPrice": 40, "total": 20000 },
+            { "name": "Adhesives", "quantity": 200, "unitPrice": 30, "total": 6000 }
+        ],
+        "total": 26000,
+        "paymentTerms": "Net 30",
+        "notes": "Special handling required",
+        "lastUpdated": "2023-09-08"
+    },
+    {
+        "id": "ORD-2023-417",
+        "supplierId": 1,
+        "supplierName": "ElectroTech Industries",
+        "date": "2023-09-01",
+        "deliveryDate": "2023-09-15",
+        "status": "delivered",
+        "items": [
+            { "name": "PCB Assemblies", "quantity": 100, "unitPrice": 120, "total": 12000 }
+        ],
+        "total": 12000,
+        "paymentTerms": "Net 30",
+        "notes": "Delivered on time, quality check passed",
+        "lastUpdated": "2023-09-16",
+        "deliveredDate": "2023-09-15"
+    },
+    {
+        "id": "ORD-2023-416",
+        "supplierId": 5,
+        "supplierName": "Quality Service Providers",
+        "date": "2023-08-28",
+        "deliveryDate": "2023-10-15",
+        "status": "processing",
+        "items": [
+            { "name": "Consulting Services", "quantity": 1, "unitPrice": 15000, "total": 15000 },
+            { "name": "Quality Audits", "quantity": 5, "unitPrice": 2000, "total": 10000 }
+        ],
+        "total": 25000,
+        "paymentTerms": "Net 45",
+        "notes": "Ongoing service contract",
+        "lastUpdated": "2023-09-10"
+    },
+    {
+        "id": "ORD-2023-415",
+        "supplierId": 2,
+        "supplierName": "Global Packaging Solutions",
+        "date": "2023-08-25",
+        "deliveryDate": "2023-09-08",
+        "status": "delivered",
+        "items": [
+            { "name": "Shipping Materials", "quantity": 10000, "unitPrice": 0.5, "total": 5000 }
+        ],
+        "total": 5000,
+        "paymentTerms": "Net 30",
+        "notes": "Regular monthly order",
+        "lastUpdated": "2023-09-09",
+        "deliveredDate": "2023-09-08"
+    }
+]
+
+# Mock negotiations data
+negotiations_data = [
+    {
+        "id": 1,
+        "supplierId": 1,
+        "supplierName": "ElectroTech Industries",
+        "category": "Electronics",
+        "startDate": "2023-09-10",
+        "status": "active",
+        "nextAction": "Awaiting supplier response",
+        "lastActivity": "2023-09-15",
+        "products": ["Microcontrollers", "Sensors"],
+        "targetSavings": 8.5,
+        "currentStage": "Counter Offer",
+        "priority": "high"
+    },
+    {
+        "id": 2,
+        "supplierId": 2,
+        "supplierName": "Global Packaging Solutions",
+        "category": "Packaging",
+        "startDate": "2023-09-05",
+        "status": "active",
+        "nextAction": "Review supplier proposal",
+        "lastActivity": "2023-09-14",
+        "products": ["Custom Boxes", "Protective Packaging"],
+        "targetSavings": 5.2,
+        "currentStage": "Initial Proposal",
+        "priority": "medium"
+    },
+    {
+        "id": 3,
+        "supplierId": 3,
+        "supplierName": "RawMat Suppliers Inc",
+        "category": "Raw Materials",
+        "startDate": "2023-08-28",
+        "status": "scheduled",
+        "nextAction": "Kickoff meeting on 2023-09-20",
+        "lastActivity": "2023-09-12",
+        "products": ["Industrial Polymers", "Adhesives"],
+        "targetSavings": 7.0,
+        "currentStage": "Planning",
+        "priority": "low"
+    },
+    {
+        "id": 4,
+        "supplierId": 5,
+        "supplierName": "Quality Service Providers",
+        "category": "Services",
+        "startDate": "2023-08-15",
+        "status": "completed",
+        "nextAction": "Implementation",
+        "lastActivity": "2023-09-08",
+        "products": ["Consulting Services", "Quality Audits"],
+        "targetSavings": 10.0,
+        "currentStage": "Agreement",
+        "priority": "medium",
+        "outcome": "Success",
+        "actualSavings": 11.2
+    }
+]
+
+# Mock compliance items data
+compliance_data = [
+    {
+        "id": 1,
+        "supplierId": 1,
+        "supplierName": "ElectroTech Industries",
+        "documentType": "ISO 9001 Certification",
+        "status": "compliant",
+        "expiryDate": "2024-06-30",
+        "lastChecked": "2023-09-12",
+        "category": "Quality Management",
+        "notes": "Certification verified with issuing body"
+    },
+    {
+        "id": 2,
+        "supplierId": 1,
+        "supplierName": "ElectroTech Industries",
+        "documentType": "Environmental Policy",
+        "status": "compliant",
+        "expiryDate": "2024-11-15",
+        "lastChecked": "2023-09-12",
+        "category": "Environmental",
+        "notes": "Document meets all requirements"
+    },
+    {
+        "id": 3,
+        "supplierId": 2,
+        "supplierName": "Global Packaging Solutions",
+        "documentType": "Food Safety Certification",
+        "status": "review",
+        "expiryDate": "2023-10-30",
+        "lastChecked": "2023-09-10",
+        "category": "Product Safety",
+        "notes": "Certification expires in less than 60 days"
+    },
+    {
+        "id": 4,
+        "supplierId": 3,
+        "supplierName": "RawMat Suppliers Inc",
+        "documentType": "REACH Compliance",
+        "status": "non-compliant",
+        "expiryDate": "2023-07-15",
+        "lastChecked": "2023-09-05",
+        "category": "Regulatory",
+        "notes": "Certification expired, follow-up required"
+    },
+    {
+        "id": 5,
+        "supplierId": 4,
+        "supplierName": "FastTrack Logistics",
+        "documentType": "Insurance Certificate",
+        "status": "compliant",
+        "expiryDate": "2024-02-28",
+        "lastChecked": "2023-09-01",
+        "category": "Insurance",
+        "notes": "Coverage meets minimum requirements"
+    },
+    {
+        "id": 6,
+        "supplierId": 5,
+        "supplierName": "Quality Service Providers",
+        "documentType": "Professional Certifications",
+        "status": "compliant",
+        "expiryDate": "2024-05-15",
+        "lastChecked": "2023-08-20",
+        "category": "Professional Qualifications",
+        "notes": "All staff certifications verified"
+    },
+    {
+        "id": 7,
+        "supplierId": 3,
+        "supplierName": "RawMat Suppliers Inc",
+        "documentType": "Fair Labor Practices",
+        "status": "review",
+        "expiryDate": None,
+        "lastChecked": "2023-09-08",
+        "category": "Social Responsibility",
+        "notes": "Additional documentation requested"
+    }
+]
