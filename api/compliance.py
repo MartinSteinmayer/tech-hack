@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from .mock_data import compliance_data
+from .mock_data import suppliers_data
 from langchain_mistralai import ChatMistralAI
 import getpass
 import os
@@ -74,19 +75,37 @@ def analyze_document():
 
 
 
-@compliance_bp.route('/requirements', methods=['GET'])
+@compliance_bp.route('/requirements', methods=['POST'])
 def get_requirements():
-    """Get compliance requirements for a specific industry/region"""
-    industry = request.args.get('industry', 'all')
-    region = request.args.get('region', 'global')
+    data = request.get_json() #get the json payload (comes in json as {user_text} : {text}
+    extracted_text = data.get("user_text","")
 
-    # Filter mock requirements based on industry and region
-    filtered_requirements = [
-        r for r in compliance_data
-        if (industry == 'all' or r['industry'] == industry) and (region == 'global' or region in r['regions'])
+    if not extracted_text:
+        return jsonify({"error": "No user_text provided"}), 400  # Return error if empty
+
+    suppliers_database_json = str(suppliers_data)
+
+    # Process the extracted text (e.g., send it to Mistral, or return it for now)
+    messages = [
+        {
+            "role": "user",
+            "content": f"""You are an AI assistant specializing in supplier selection. Your task is to analyze user-provided supplier requirements and match them with the most suitable suppliers from a given database, which in our case is a list of suppliers in JSON format. After analyzing the availiable suppliers from the list, output in JSON format which suppliers fit the requirements (if any) and give reasons why they are a good fit.
+
+        Client's requirements:
+        {extracted_text} \n\n
+        Database:\n
+         {suppliers_database_json}\n   """,
+        }
     ]
+    chat_response = client.chat.complete(
+          model = model,
+          messages = messages,
+          response_format = {
+              "type": "json_object",
+          }
+    )
 
-    return jsonify(filtered_requirements)
+    return chat_response.choices[0].message.content
 
 
 @compliance_bp.route('/verify', methods=['POST'])
