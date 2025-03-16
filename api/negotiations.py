@@ -250,20 +250,120 @@ def draft_message():
     data = request.json
     message_type = data.get('type', 'inquiry')
     supplier_name = data.get('supplier')
+    additional_context = data.get('additionalContext', '')
+    key_points = data.get('keyPoints', '')
 
-    # This would use Mistral AI to generate actual messages
-    message_templates = {
-        "inquiry":
-            f"Dear {supplier_name},\n\nWe are interested in your products and would like to request more information about your pricing and availability for our upcoming projects.\n\nBest regards,\nTacto Team",
-        "negotiation":
-            f"Dear {supplier_name},\n\nThank you for your quote. We would like to discuss the possibility of a volume discount based on our projected annual needs.\n\nBest regards,\nTacto Team",
-        "followup":
-            f"Dear {supplier_name},\n\nI'm following up on our previous conversation regarding pricing. Have you had a chance to review our proposal?\n\nBest regards,\nTacto Team"
+    # Get supplier information if available
+    supplier = get_supplier_by_name(suppliers_data, supplier_name)
+
+    # Gather context about this supplier from our data
+    supplier_context = {}
+    if supplier:
+        # Extract relevant supplier data
+        supplier_context = {
+            "name": supplier.get("name"),
+            "category": supplier.get("category"),
+            "rating": supplier.get("rating"),
+            "relationshipLength": supplier.get("relationshipLength", "New"),
+            "averageDiscount": supplier.get("averageDiscount"),
+            "contractExpiry": supplier.get("contractExpiry"),
+            "negotiationHistory": supplier.get("negotiationHistory", [])
+        }
+
+    # Define message types and their contexts
+    message_contexts = {
+        "inquiry": "an initial inquiry about products or services",
+        "negotiation": "a price negotiation or discussion of terms",
+        "followup": "a follow-up on a previous conversation or proposal"
     }
 
-    return jsonify({
-        "subject": f"Re: {message_type.capitalize()} with {supplier_name}",
-        "body": message_templates.get(message_type, message_templates['inquiry']),
-        "suggested_tone": "Professional and direct",
-        "key_points": ["Reference previous communication", "Be specific about needs", "Include timeline expectations"]
-    })
+    # Use Mistral AI to generate the message
+    prompt_context = {
+        "messageType": message_type,
+        "messageContext": message_contexts.get(message_type, "an inquiry"),
+        "supplierName": supplier_name,
+        "supplierInfo": supplier_context,
+        "additionalContext": additional_context,
+        "keyPoints": key_points
+    }
+
+    messages = [{
+        "role":
+            "user",
+        "content":
+            f"""You are an expert communication specialist drafting a business email to a supplier. 
+        
+        Generate a professional email for the following scenario:
+        
+        Message Type: {message_type} ({message_contexts.get(message_type, "an inquiry")})
+        Supplier: {supplier_name}
+        Additional Context: {additional_context}
+        Key Points to Include: {key_points}
+        
+        Supplier Information: {json.dumps(supplier_context, indent=2)}
+        
+        Please craft a professional email with:
+        1. An appropriate subject line
+        2. A complete message body
+        3. A professional closing
+        
+        Also provide:
+        - The suggested tone for this communication
+        - 3-5 key points that should be considered for this type of message
+        
+        Return as a JSON object with the following structure:
+        {{
+            "subject": "The email subject line",
+            "body": "The complete email body with appropriate greeting and closing",
+            "suggested_tone": "Description of the appropriate tone",
+            "key_points": ["Point 1", "Point 2", "Point 3"]
+        }}
+        """,
+    }]
+
+    try:
+        chat_response = client.chat.complete(model=model, messages=messages, response_format={
+            "type": "json_object",
+        })
+        message_data = json.loads(chat_response.choices[0].message.content)
+        return jsonify(message_data)
+    except Exception as e:
+        print(f"Error generating message with Mistral AI: {e}")
+        # Fallback to templates if API call fails
+        message_templates = {
+            "inquiry":
+                f"Dear {supplier_name},\n\nWe are interested in your products and would like to request more information about your pricing and availability for our upcoming projects.\n\nBest regards,\nTacto Team",
+            "negotiation":
+                f"Dear {supplier_name},\n\nThank you for your quote. We would like to discuss the possibility of a volume discount based on our projected annual needs.\n\nBest regards,\nTacto Team",
+            "followup":
+                f"Dear {supplier_name},\n\nI'm following up on our previous conversation regarding pricing. Have you had a chance to review our proposal?\n\nBest regards,\nTacto Team"
+        }
+
+        # Add any additional context if provided
+        body = message_templates.get(message_type, message_templates['inquiry'])
+        if additional_context:
+            # Insert additional context before the closing
+            body_parts = body.rsplit("\n\n", 1)
+            body = f"{body_parts[0]}\n\n{additional_context}\n\n{body_parts[1]}"
+
+        # Add key points if provided
+        if key_points:
+            key_points_list = [point.strip() for point in key_points.split("\n") if point.strip()]
+            # Only include if there are actual points
+            if key_points_list:
+                body_parts = body.rsplit("\n\n", 1)
+                points_text = "\n".join([f"- {point}" for point in key_points_list])
+                body = f"{body_parts[0]}\n\nKey points:\n{points_text}\n\n{body_parts[1]}"
+
+        fallback_response = {
+            "subject":
+                f"Re: {message_type.capitalize()} with {supplier_name}",
+            "body":
+                body,
+            "suggested_tone":
+                "Professional and direct",
+            "key_points": [
+                "Reference previous communication", "Be specific about needs", "Include timeline expectations"
+            ]
+        }
+        return jsonify(fallback_response)
