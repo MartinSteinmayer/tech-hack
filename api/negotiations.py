@@ -44,7 +44,7 @@ def generate_dossier():
     return jsonify(dossier)
 
 
-def load_mock_data(json_file_path='mock_data.json'):
+def load_mock_data(json_file_path='api/mock_data.json'):
     try:
         with open(json_file_path, 'r') as file:
             return json.load(file)
