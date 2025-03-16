@@ -7,7 +7,7 @@ from api.compliance import compliance_bp
 from api.orders import orders_bp
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # Register blueprints
 app.register_blueprint(suppliers_bp, url_prefix='/api/suppliers')
