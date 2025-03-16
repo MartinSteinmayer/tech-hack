@@ -56,7 +56,7 @@ def analyze_document():
             "content": f"""You are a compliance expert analyzing legal documents.
             Analyze the following document for legal and compliance irregularities.
         Identify missing clauses, ambiguous language, and potential legal risks.
-        Answer in JSON format with the following keys: identified clauses, compliance concerns and suggested actions.
+        Answer in JSON format with the following keys: identified clauses, compliance concerns, suggested actions and a compliance score from 0 to 100%.
 
         Document:
         {extracted_text}""",
