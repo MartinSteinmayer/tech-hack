@@ -9,7 +9,6 @@ import fitz
 import requests
 from dotenv import load_dotenv
 
-
 compliance_bp = Blueprint('compliance', __name__)
 
 load_dotenv()
@@ -19,7 +18,6 @@ model = "mistral-large-latest"
 client = Mistral(api_key=api_key)
 
 
-
 def extract_text_from_pdf(pdf_path):
     """Extract text from an uploaded PDF file using PyMuPDF."""
     text = ""
@@ -27,6 +25,7 @@ def extract_text_from_pdf(pdf_path):
     for page in doc:
         text += page.get_text("text") + "\n"
     return text
+
 
 @compliance_bp.route('/analyze-document', methods=['POST'])
 def analyze_document():
@@ -50,35 +49,30 @@ def analyze_document():
     extracted_text = extract_text_from_pdf(temp_path)
 
     # Process the extracted text (e.g., send it to Mistral, or return it for now)
-    messages = [
-        {
-            "role": "user",
-            "content": f"""You are a compliance expert analyzing legal documents.
+    messages = [{
+        "role":
+            "user",
+        "content":
+            f"""You are a compliance expert analyzing legal documents.
             Analyze the following document for legal and compliance irregularities.
         Identify missing clauses, ambiguous language, and potential legal risks.
         Answer in JSON format with the following keys: identified clauses, compliance concerns, suggested actions and a compliance score from 0 to 100%.
 
         Document:
         {extracted_text}""",
-        }
-    ]
-    chat_response = client.chat.complete(
-          model = model,
-          messages = messages,
-          response_format = {
-              "type": "json_object",
-          }
-    )
+    }]
+    chat_response = client.chat.complete(model=model, messages=messages, response_format={
+        "type": "json_object",
+    })
 
     os.remove(temp_path)  # Cleanup the temporary file
     return chat_response.choices[0].message.content
 
 
-
 @compliance_bp.route('/requirements', methods=['POST'])
 def get_requirements():
-    data = request.get_json() #get the json payload (comes in json as {user_text} : {text}
-    extracted_text = data.get("user_text","")
+    data = request.get_json()  #get the json payload (comes in json as {user_text} : {text}
+    extracted_text = data.get("user_text", "")
 
     if not extracted_text:
         return jsonify({"error": "No user_text provided"}), 400  # Return error if empty
@@ -86,24 +80,20 @@ def get_requirements():
     suppliers_database_json = str(suppliers_data)
 
     # Process the extracted text (e.g., send it to Mistral, or return it for now)
-    messages = [
-        {
-            "role": "user",
-            "content": f"""You are an AI assistant specializing in supplier selection. Your task is to analyze user-provided supplier requirements and match them with the most suitable suppliers from a given database, which in our case is a list of suppliers in JSON format. After analyzing the availiable suppliers from the list, output in JSON format which suppliers fit the requirements (if any) and give reasons why they are a good fit.
+    messages = [{
+        "role":
+            "user",
+        "content":
+            f"""You are an AI assistant specializing in supplier selection. Your task is to analyze user-provided supplier requirements and match them with the most suitable suppliers from a given database, which in our case is a list of suppliers in JSON format. After analyzing the availiable suppliers from the list, output in JSON format which suppliers fit the requirements (if any) and give reasons why they are a good fit.
 
         Client's requirements:
         {extracted_text} \n\n
         Database:\n
          {suppliers_database_json}\n   """,
-        }
-    ]
-    chat_response = client.chat.complete(
-          model = model,
-          messages = messages,
-          response_format = {
-              "type": "json_object",
-          }
-    )
+    }]
+    chat_response = client.chat.complete(model=model, messages=messages, response_format={
+        "type": "json_object",
+    })
 
     return chat_response.choices[0].message.content
 
@@ -126,22 +116,20 @@ def verify_compliance():
 
     return jsonify(verification_result)
 
-
-
- @compliance_bp.route('/test', methods=['GET'])
- def test():
-    messages = [
-        {
-            "role": "user",
-            "content": "What is the best French meal? Return the name and the ingredients in short JSON object.",
-        }
-    ]
-    chat_response = client.chat.complete(
-          model = model,
-          messages = messages,
-          response_format = {
-              "type": "json_object",
-          }
-    )
-    # print(chat_response.choices[0].message.content)
-    return chat_response.choices[0].message.content
+# @compliance_bp.route('/test', methods=['GET'])
+# def test():
+#    messages = [
+#        {
+#            "role": "user",
+#            "content": "What is the best French meal? Return the name and the ingredients in short JSON object.",
+#        }
+#    ]
+#    chat_response = client.chat.complete(
+#          model = model,
+#          messages = messages,
+#          response_format = {
+#              "type": "json_object",
+#          }
+#    )
+#    # print(chat_response.choices[0].message.content)
+#    return chat_response.choices[0].message.content
