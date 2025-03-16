@@ -1,5 +1,9 @@
 from flask import Blueprint, request, jsonify
-from .mock_data import suppliers_data
+from .mock_data import suppliers_data, possible_suppliers_data
+from dotenv import load_dotenv
+import os
+from mistralai import Mistral
+import json
 
 suppliers_bp = Blueprint('suppliers', __name__)
 
@@ -58,12 +62,73 @@ def search_suppliers():
 
 @suppliers_bp.route('/recommend', methods=['GET'])
 def recommend_suppliers():
-    """Get recommended suppliers based on parameters"""
-    # This would later use the knowledge graph to make intelligent recommendations
-    # For now, just return the highest rated suppliers
+    """Get recommended suppliers based on parameters using Mistral AI"""
+    # Get query parameters
     product_category = request.args.get('category', '')
 
-    recommended = [s for s in suppliers_data if product_category in s.get('categories', [])]
-    recommended.sort(key=lambda x: x.get('rating', 0), reverse=True)
+    # Initialize Mistral client
+    load_dotenv()
+    api_key = os.getenv("MISTRAL_API_KEY")
+    model = "mistral-large-latest"
+    client = Mistral(api_key=api_key)
 
-    return jsonify(recommended[:5])  # Return top 5
+    # Filter suppliers by category (if provided)
+    if product_category:
+        possible_suppliers = [
+            s for s in possible_suppliers_data if product_category.lower() in s.get('category', '').lower()
+        ]
+    else:
+        possible_suppliers = possible_suppliers_data
+
+    # Function to call Mistral AI (reusing the function from negotiations_bp)
+    def ai_call(prompt):
+        messages = [{"role": "user", "content": f"{prompt}"}]
+        chat_response = client.chat.complete(model=model, messages=messages, response_format={
+            "type": "json_object",
+        })
+        return chat_response.choices[0].message.content
+
+    # Prepare the prompt for Mistral AI
+    prompt = f"""You are a procurement specialist AI. I need you to analyze the following list of suppliers and recommend the best one for our needs.
+    
+    Category: {product_category if product_category else "Any/All Categories"}
+    
+    Supplier Data:
+    {json.dumps(possible_suppliers, indent=2)}
+    
+    Please analyze these suppliers and recommend the SINGLE best one based on:
+    1. Overall rating and quality scores
+    2. Reliability and delivery performance
+    3. Risk factors and compliance status
+    4. Previous negotiation outcomes and discounts
+    5. Financial health indicators like profit margins
+    
+    Return your response as a JSON object with the following structure:
+    {{
+        "recommended_supplier": {{
+            // Full supplier object here
+        }},
+        "reasons": ["Reason 1", "Reason 2", ...],
+        "considerations": "Any other considerations or notes about this supplier"
+    }}
+    """
+
+    try:
+        # Get the recommendation from Mistral AI
+        recommendation = ai_call(prompt)
+        return recommendation
+    except Exception as e:
+        # Fallback if Mistral AI fails
+        print(f"Error getting recommendation from Mistral AI: {e}")
+
+        # Sort by rating as a fallback
+        possible_suppliers.sort(key=lambda x: x.get('rating', 0), reverse=True)
+        best_supplier = possible_suppliers[0] if possible_suppliers else {}
+
+        fallback_response = {
+            "recommended_supplier": best_supplier,
+            "reasons": ["Highest overall rating among available suppliers"],
+            "considerations": "This recommendation is based solely on the supplier's rating as a fallback mechanism."
+        }
+
+        return jsonify(fallback_response)

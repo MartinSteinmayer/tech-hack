@@ -1,4 +1,264 @@
 {
+  "possible_suppliers_data": [
+    {
+      "id": 101,
+      "name": "TechnoCore Systems",
+      "description": "TechnoCore Systems specializes in advanced semiconductor technologies and integrated circuits for next-generation computing applications.",
+      "category": "Electronics",
+      "subcategory": "Semiconductors",
+      "location": "Taipei, Taiwan",
+      "region": "Asia",
+      "rating": 4.7,
+      "reliabilityScore": 93,
+      "qualityScore": 96,
+      "deliveryScore": 91,
+      "status": "active",
+      "complianceStatus": "compliant",
+      "averageDiscount": 6.8,
+      "currentPricing": "Premium",
+      "profitMargin": 22,
+      "certifications": [
+        {"name": "ISO 9001:2015", "valid": true},
+        {"name": "ISO 14001:2015", "valid": true},
+        {"name": "IATF 16949", "valid": true}
+      ],
+      "riskFactors": [
+        {"category": "Geopolitical", "level": "medium"},
+        {"category": "Supply Chain", "level": "low"},
+        {"category": "Financial", "level": "low"}
+      ],
+      "negotiationHistory": [
+        {"date": "2023-07-12", "outcome": "Success", "savings": 7.8},
+        {"date": "2022-11-05", "outcome": "Success", "savings": 6.2}
+      ]
+    },
+    {
+      "id": 102,
+      "name": "EcoPackage Innovations",
+      "description": "EcoPackage Innovations creates fully biodegradable and compostable packaging solutions from plant-based materials with zero plastic content.",
+      "category": "Packaging",
+      "subcategory": "Sustainable Packaging",
+      "location": "Copenhagen, Denmark",
+      "region": "Europe",
+      "rating": 4.6,
+      "reliabilityScore": 89,
+      "qualityScore": 92,
+      "deliveryScore": 86,
+      "status": "active",
+      "complianceStatus": "compliant",
+      "averageDiscount": 5.5,
+      "currentPricing": "Premium",
+      "profitMargin": 18,
+      "certifications": [
+        {"name": "ISO 9001:2015", "valid": true},
+        {"name": "Cradle to Cradle Certified", "valid": true},
+        {"name": "EU Ecolabel", "valid": true}
+      ],
+      "riskFactors": [
+        {"category": "Geopolitical", "level": "low"},
+        {"category": "Supply Chain", "level": "medium"},
+        {"category": "Financial", "level": "medium"}
+      ],
+      "negotiationHistory": [
+        {"date": "2023-08-14", "outcome": "Success", "savings": 5.8},
+        {"date": "2023-01-10", "outcome": "Partial", "savings": 3.2}
+      ]
+    },
+    {
+      "id": 103,
+      "name": "FusionAlloys Inc",
+      "description": "FusionAlloys Inc develops and manufactures specialty metal alloys for aerospace, medical, and high-performance industrial applications.",
+      "category": "Raw Materials",
+      "subcategory": "Specialty Metals",
+      "location": "Pittsburgh, USA",
+      "region": "North America",
+      "rating": 4.9,
+      "reliabilityScore": 94,
+      "qualityScore": 97,
+      "deliveryScore": 89,
+      "status": "active",
+      "complianceStatus": "compliant",
+      "averageDiscount": 4.2,
+      "currentPricing": "Premium",
+      "profitMargin": 25,
+      "certifications": [
+        {"name": "ISO 9001:2015", "valid": true},
+        {"name": "AS9100D", "valid": true},
+        {"name": "ISO 13485", "valid": true}
+      ],
+      "riskFactors": [
+        {"category": "Geopolitical", "level": "low"},
+        {"category": "Supply Chain", "level": "medium"},
+        {"category": "Financial", "level": "low"}
+      ],
+      "negotiationHistory": [
+        {"date": "2023-06-05", "outcome": "Partial", "savings": 3.8},
+        {"date": "2022-09-18", "outcome": "Success", "savings": 5.1}
+      ]
+    },
+    {
+      "id": 104,
+      "name": "QuickShip Global",
+      "description": "QuickShip Global provides international logistics services with real-time tracking and guaranteed delivery windows for time-sensitive freight.",
+      "category": "Logistics",
+      "subcategory": "Time-Critical Freight",
+      "location": "Dubai, UAE",
+      "region": "Middle East",
+      "rating": 4.5,
+      "reliabilityScore": 91,
+      "qualityScore": 87,
+      "deliveryScore": 96,
+      "status": "active",
+      "complianceStatus": "compliant",
+      "averageDiscount": 5.8,
+      "currentPricing": "Standard",
+      "profitMargin": 17,
+      "certifications": [
+        {"name": "ISO 9001:2015", "valid": true},
+        {"name": "ISO 28000:2007", "valid": true},
+        {"name": "TAPA FSR", "valid": true}
+      ],
+      "riskFactors": [
+        {"category": "Geopolitical", "level": "medium"},
+        {"category": "Supply Chain", "level": "low"},
+        {"category": "Financial", "level": "low"}
+      ],
+      "negotiationHistory": [
+        {"date": "2023-09-02", "outcome": "Success", "savings": 6.5},
+        {"date": "2023-02-15", "outcome": "Success", "savings": 5.9}
+      ]
+    },
+    {
+      "id": 105,
+      "name": "BioProcess Solutions",
+      "description": "BioProcess Solutions develops custom enzymes and biological catalysts for pharmaceutical manufacturing and industrial biotechnology applications.",
+      "category": "Chemicals",
+      "subcategory": "Biochemicals",
+      "location": "Basel, Switzerland",
+      "region": "Europe",
+      "rating": 4.8,
+      "reliabilityScore": 93,
+      "qualityScore": 96,
+      "deliveryScore": 88,
+      "status": "active",
+      "complianceStatus": "compliant",
+      "averageDiscount": 5.2,
+      "currentPricing": "Premium",
+      "profitMargin": 28,
+      "certifications": [
+        {"name": "ISO 9001:2015", "valid": true},
+        {"name": "ISO 14001:2015", "valid": true},
+        {"name": "REACH Compliant", "valid": true}
+      ],
+      "riskFactors": [
+        {"category": "Geopolitical", "level": "low"},
+        {"category": "Supply Chain", "level": "medium"},
+        {"category": "Financial", "level": "low"}
+      ],
+      "negotiationHistory": [
+        {"date": "2023-07-28", "outcome": "Success", "savings": 5.5},
+        {"date": "2022-12-14", "outcome": "Partial", "savings": 3.1}
+      ]
+    },
+    {
+      "id": 106,
+      "name": "Precision Polymer Tech",
+      "description": "Precision Polymer Tech manufactures high-performance custom polymers and composite materials for automotive and aerospace applications.",
+      "category": "Raw Materials",
+      "subcategory": "Engineered Polymers",
+      "location": "Osaka, Japan",
+      "region": "Asia",
+      "rating": 4.7,
+      "reliabilityScore": 92,
+      "qualityScore": 95,
+      "deliveryScore": 87,
+      "status": "active",
+      "complianceStatus": "compliant",
+      "averageDiscount": 4.5,
+      "currentPricing": "Premium",
+      "profitMargin": 23,
+      "certifications": [
+        {"name": "ISO 9001:2015", "valid": true},
+        {"name": "IATF 16949", "valid": true},
+        {"name": "ISO 14001:2015", "valid": true}
+      ],
+      "riskFactors": [
+        {"category": "Geopolitical", "level": "low"},
+        {"category": "Supply Chain", "level": "medium"},
+        {"category": "Financial", "level": "low"}
+      ],
+      "negotiationHistory": [
+        {"date": "2023-05-18", "outcome": "Success", "savings": 4.9},
+        {"date": "2022-10-22", "outcome": "Success", "savings": 5.3}
+      ]
+    },
+    {
+      "id": 107,
+      "name": "CloudSecure Services",
+      "description": "CloudSecure Services provides enterprise-grade cloud security solutions, compliance monitoring, and managed security operations for global businesses.",
+      "category": "Services",
+      "subcategory": "Cybersecurity",
+      "location": "Toronto, Canada",
+      "region": "North America",
+      "rating": 4.8,
+      "reliabilityScore": 94,
+      "qualityScore": 96,
+      "deliveryScore": 91,
+      "status": "active",
+      "complianceStatus": "compliant",
+      "averageDiscount": 7.1,
+      "currentPricing": "Premium",
+      "profitMargin": 32,
+      "certifications": [
+        {"name": "ISO 27001:2013", "valid": true},
+        {"name": "SOC 2 Type II", "valid": true},
+        {"name": "CSA STAR", "valid": true}
+      ],
+      "riskFactors": [
+        {"category": "Geopolitical", "level": "low"},
+        {"category": "Supply Chain", "level": "low"},
+        {"category": "Financial", "level": "low"}
+      ],
+      "negotiationHistory": [
+        {"date": "2023-08-10", "outcome": "Success", "savings": 7.3},
+        {"date": "2023-01-25", "outcome": "Partial", "savings": 4.6}
+      ]
+    },
+    {
+      "id": 108,
+      "name": "MediSupply Innovations",
+      "description": "MediSupply Innovations manufactures advanced medical devices, disposables, and diagnostics equipment for hospitals and healthcare facilities worldwide.",
+      "category": "Healthcare",
+      "subcategory": "Medical Supplies",
+      "location": "Minneapolis, USA",
+      "region": "North America",
+      "rating": 4.9,
+      "reliabilityScore": 96,
+      "qualityScore": 98,
+      "deliveryScore": 93,
+      "status": "active",
+      "complianceStatus": "compliant",
+      "averageDiscount": 4.3,
+      "currentPricing": "Premium",
+      "profitMargin": 30,
+      "certifications": [
+        {"name": "ISO 13485:2016", "valid": true},
+        {"name": "FDA Registered", "valid": true},
+        {"name": "CE Mark", "valid": true}
+      ],
+      "riskFactors": [
+        {"category": "Geopolitical", "level": "low"},
+        {"category": "Supply Chain", "level": "low"},
+        {"category": "Financial", "level": "low"}
+      ],
+      "negotiationHistory": [
+        {"date": "2023-07-05", "outcome": "Success", "savings": 4.8},
+        {"date": "2022-11-30", "outcome": "Success", "savings": 4.5}
+      ]
+    }
+  ]
+}
+{
   "suppliers": [
     {
       "id": 1,
