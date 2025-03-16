@@ -49,7 +49,7 @@ def generate_dossier():
     prompt = f"""You are a bussiness assistant and your task is to draw up a dossier to a supplier using the following information availiable about the supplier:\n
     {str(supplier)}\n
     Here is which essencial information the dossier should contain:\n
-    supplier_name, key_contacts, previous_negotiations, suggested_strategies, pricing_insights (current_pricing = avg_price, market_average = avg_price*0,95, suggested_target = avg_price*0,9), but feel free to add any helpful information based on the supplier data availiable. Make sure to organise the dossier using JSON formatting.
+    supplier_name, key_contacts, previous_negotiations, suggested_strategies, pricing_insights (current_pricing = avg_price, market_average = avg_price*0,95, suggested_target = avg_price*0,9), SWAT analysis, negotiation strategy, risk assessment, but feel free to add any helpful information based on the supplier data availiable. Make sure to organise the dossier using JSON formatting.
     """
     # dossier = {
         # "supplier_name": supplier['name'],
