@@ -5,6 +5,8 @@ import os
 from mistralai import Mistral
 import json
 
+# Create a Blueprint for the suppliers API
+
 suppliers_bp = Blueprint('suppliers', __name__)
 
 
