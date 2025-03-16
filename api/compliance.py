@@ -109,20 +109,20 @@ def verify_compliance():
 
 
 
-# @compliance_bp.route('/test', methods=['GET'])
-# def test():
-    # messages = [
-        # {
-            # "role": "user",
-            # "content": "What is the best French meal? Return the name and the ingredients in short JSON object.",
-        # }
-    # ]
-    # chat_response = client.chat.complete(
-          # model = model,
-          # messages = messages,
-          # response_format = {
-              # "type": "json_object",
-          # }
-    # )
-    # # print(chat_response.choices[0].message.content)
-    # return chat_response.choices[0].message.content
+ @compliance_bp.route('/test', methods=['GET'])
+ def test():
+    messages = [
+        {
+            "role": "user",
+            "content": "What is the best French meal? Return the name and the ingredients in short JSON object.",
+        }
+    ]
+    chat_response = client.chat.complete(
+          model = model,
+          messages = messages,
+          response_format = {
+              "type": "json_object",
+          }
+    )
+    # print(chat_response.choices[0].message.content)
+    return chat_response.choices[0].message.content
