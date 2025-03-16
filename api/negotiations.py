@@ -14,11 +14,29 @@ model = "mistral-large-latest"
 client = Mistral(api_key=api_key)
 
 
+def ai_call(prompt):
+    messages=[
+        {
+            "role": "user",
+            "content": f"{prompt}"
+        }
+    ]
+    chat_response = client.chat.complete(
+        model=model,
+        messages= messages,
+        response_format={
+            "type": "json_object",
+        }
+    )
+    return chat_response.choices[0].message.content
+
+
+
 @negotiations_bp.route('/generate-dossier', methods=['POST'])
 def generate_dossier():
     """Generate a negotiation dossier for a specific supplier"""
-    data = request.json
-    supplier_id = data.get('supplier_id')
+    data = request.get_json()
+    supplier_id = data.get('supplier_id', "")
 
     # Find supplier
     supplier = next((s for s in suppliers_data if s['id'] == supplier_id), None)
@@ -27,22 +45,27 @@ def generate_dossier():
 
     # Generate mock dossier
     # In real implementation, this would use Mistral AI
-    dossier = {
-        "supplier_name": supplier['name'],
-        "key_contacts": supplier.get('contacts', []),
-        "previous_negotiations": [],
-        "suggested_strategies": [
-            "Focus on volume discounts", "Highlight long-term partnership benefits", "Negotiate payment terms extension"
-        ],
-        "pricing_insights": {
-            "current_pricing": supplier.get('avg_price', 0),
-            "market_average": supplier.get('avg_price', 0) * 0.95,
-            "suggested_target": supplier.get('avg_price', 0) * 0.9
-        }
-    }
 
-    return jsonify(dossier)
+    prompt = f"""You are a bussiness assistant and your task is to draw up a dossier to a supplier using the following information availiable about the supplier:\n
+    {str(supplier)}\n
+    Here is which essencial information the dossier should contain:\n
+    supplier_name, key_contacts, previous_negotiations, suggested_strategies, pricing_insights (current_pricing = avg_price, market_average = avg_price*0,95, suggested_target = avg_price*0,9), but feel free to add any helpful information based on the supplier data availiable. Make sure to organise the dossier using JSON formatting.
+    """
+    # dossier = {
+        # "supplier_name": supplier['name'],
+        # "key_contacts": supplier.get('contacts', []),
+        # "previous_negotiations": [],
+        # "suggested_strategies": [
+            # "Focus on volume discounts", "Highlight long-term partnership benefits", "Negotiate payment terms extension"
+        # ],
+        # "pricing_insights": {
+            # "current_pricing": supplier.get('avg_price', 0),
+            # "market_average": supplier.get('avg_price', 0) * 0.95,
+            # "suggested_target": supplier.get('avg_price', 0) * 0.9
+        # }
+    # }
 
+    return ai_call(prompt)
 
 def load_mock_data(json_file_path='api/mock_data.json'):
     try:
